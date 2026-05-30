@@ -2,11 +2,10 @@ package br.com.fatec.catalogo.models;
 
 import jakarta.persistence.*;
 
-import java.io.Serializable;
-
 @Entity
 @Table(name = "TB_USUARIO")
-public class UsuarioModel implements Serializable {
+public class UsuarioModel extends Auditable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;
@@ -17,10 +16,9 @@ public class UsuarioModel implements Serializable {
     @Column(nullable = false)
     private String password;
 
-    private String role; // Ex: ROLE_ADMIN, ROLE_USER
+    private String role;
 
     // Getters e Setters
-
     public Long getIdUsuario() {
         return idUsuario;
     }

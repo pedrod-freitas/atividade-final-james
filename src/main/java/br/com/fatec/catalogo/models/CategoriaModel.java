@@ -2,13 +2,12 @@ package br.com.fatec.catalogo.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "TB_CATEGORIA")
-public class CategoriaModel implements Serializable {
+public class CategoriaModel extends Auditable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idCategoria;
@@ -20,7 +19,6 @@ public class CategoriaModel implements Serializable {
     private List<ProdutoModel> produtos;
 
     // Getters e Setters
-
     public Long getIdCategoria() {
         return idCategoria;
     }

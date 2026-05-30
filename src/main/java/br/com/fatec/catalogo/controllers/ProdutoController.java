@@ -11,7 +11,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Controller
@@ -28,7 +27,6 @@ public class ProdutoController {
     public String listar(@RequestParam(value = "nome", required = false) String nome,
                          @RequestParam(value = "categoriaId", required = false) Long categoriaId,
                          Model model) {
-
         if (nome != null && !nome.isBlank()) {
             model.addAttribute("produtos", service.listarPorNome(nome));
         } else if (categoriaId != null) {
@@ -36,7 +34,6 @@ public class ProdutoController {
         } else {
             model.addAttribute("produtos", service.listarTodos());
         }
-
         model.addAttribute("categorias", categoriaService.listarTodas());
         return "lista-produtos";
     }
@@ -53,17 +50,13 @@ public class ProdutoController {
                          BindingResult result,
                          Model model,
                          RedirectAttributes redirectAttributes) {
-
-        // Validação de quantidade negativa na camada de serviço
         if (produto.getQuantidade() != null && produto.getQuantidade() < 0) {
             result.rejectValue("quantidade", "erro.quantidade", "A quantidade em estoque não pode ser negativa.");
         }
-
         if (result.hasErrors()) {
             model.addAttribute("categorias", categoriaService.listarTodas());
             return "cadastro-produto";
         }
-
         try {
             service.salvar(produto);
         } catch (RuntimeException e) {
@@ -72,10 +65,14 @@ public class ProdutoController {
             return "cadastro-produto";
         }
 
-        String horario = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        // Busca o produto salvo para pegar o alteradoEm preenchido pela auditoria
+        ProdutoModel salvo = service.buscarPorId(produto.getIdProduto());
+        String horario = salvo.getAlteradoEm() != null
+                ? salvo.getAlteradoEm().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))
+                : "—";
+
         redirectAttributes.addFlashAttribute("mensagemSucesso",
                 "Produto salvo com sucesso! Última modificação: " + horario);
-
         return "redirect:/produtos";
     }
 
@@ -89,9 +86,7 @@ public class ProdutoController {
     @GetMapping("/excluir/{id}")
     public String excluir(@PathVariable long id, RedirectAttributes redirectAttributes) {
         service.excluir(id);
-        String horario = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
-        redirectAttributes.addFlashAttribute("mensagemSucesso",
-                "Produto excluído com sucesso! Operação realizada em: " + horario);
+        redirectAttributes.addFlashAttribute("mensagemSucesso", "Produto excluído com sucesso!");
         return "redirect:/produtos";
     }
 

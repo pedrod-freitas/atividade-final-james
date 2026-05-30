@@ -6,15 +6,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 
 @Entity
 @Table(name = "TB_PRODUTO")
-public class ProdutoModel implements Serializable {
+public class ProdutoModel extends Auditable {
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -39,38 +36,10 @@ public class ProdutoModel implements Serializable {
     @Column(name = "quantidade")
     private Integer quantidade;
 
-    //Resolve o Desafio 3
-    @Column(name="data_atualizacao")
-    private LocalDateTime dataCadastro;
+    @Column(name = "ultima_operacao")
+    private String ultimaOperacao; // "INCLUSÃO", "EDIÇÃO", "EXCLUSÃO"
 
-    @PrePersist
-    protected void onCreate() {
-        this.dataCadastro = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.dataCadastro = LocalDateTime.now();
-    }
-
-    // Getter e Setter para dataCadastro
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro;
-    }
-
-    public void setDataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
-    }
-
-    public Integer getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(Integer quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    // Construtores, Getters e Setters
+    // Getters e Setters
     public ProdutoModel() {
     }
 
@@ -106,5 +75,19 @@ public class ProdutoModel implements Serializable {
         this.categoria = categoria;
     }
 
+    public Integer getQuantidade() {
+        return quantidade;
+    }
 
+    public void setQuantidade(Integer quantidade) {
+        this.quantidade = quantidade;
+    }
+
+    public String getUltimaOperacao() {
+        return ultimaOperacao;
+    }
+
+    public void setUltimaOperacao(String ultimaOperacao) {
+        this.ultimaOperacao = ultimaOperacao;
+    }
 }
